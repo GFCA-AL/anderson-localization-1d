@@ -276,6 +276,16 @@ public:
     };
 };
 
+class WaveFunction
+{
+
+};
+
+class Simulador
+{
+
+};
+
 int main()
 {
     // Inicializa o contador temporal 
