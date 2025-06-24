@@ -39,7 +39,7 @@ public:
     vector<complex<double>> k4;     // vetor para os valores de k4 do runge kutta 
     vector<double> pot;             // vetor de potenciais do cristal (on-site energy)
     float W;                        // largura de desordem do sistema
-    float N;                        // tamanho da cadeia cristalina
+    int N;                        // tamanho da cadeia cristalina
     float sigmaDist;                // sigma inicial da distribuição (gaussiana)
 
     /**
@@ -81,7 +81,7 @@ public:
      */
     void evoluir(double t_fotos[], float t_max) {
         // TODO: Implementar as fotografias nos tempos específicos
-        
+
         // passo runge-kutta
         const double h = 10E-3;
 
@@ -137,7 +137,7 @@ public:
     {
         if (sigmaDist != 0)
         {
-            for (int n = 0; n <= N; n++)
+            for (size_t n = 0; n <= N; n++)
             {
                 k1[n] = exp((-(pow(fabs(n - N/2), 2.0))) / 2.0 * sigmaDist) / (sqrt(2.0 * PI)) + 0.0 * I;
                 k2[n] = exp((-(pow(fabs(n - N/2), 2.0))) / 2.0 * sigmaDist) / (sqrt(2.0 * PI)) + 0.0 * I;
@@ -155,35 +155,35 @@ public:
     void RK4(double h)
     {
 
-        for (int n = 1; n < N; n++)
+        for (size_t n = 1; n < N; n++)
         {
             k1[n] = h * dpsi_dt(psi_n[n+1],
                                 psi_n[n-1],
                                 psi_n[n],
                                 pot[n]);
         }
-        for (int n = 1; n < N; n++)
+        for (size_t n = 1; n < N; n++)
         {
             k2[n] = h * dpsi_dt(psi_n[n+1] + 0.5 * k1[n+1],
                                 psi_n[n-1] + 0.5 * k1[n-1],
                                 psi_n[n] + k1[n],
                                 pot[n]);
         }
-        for (int n = 1; n < N; n++)
+        for (size_t n = 1; n < N; n++)
         {
             k3[n] = h * dpsi_dt(psi_n[n+1] + 0.5 * k2[n+1],
                                 psi_n[n-1] + 0.5 * k2[n-1],
                                 psi_n[n] + 0.5 * k2[n],
                                 pot[n]);
         }
-        for (int n = 1; n < N; n++)
+        for (size_t n = 1; n < N; n++)
         {
             k4[n] = h * dpsi_dt(psi_n[n+1] + k3[n+1],
                                 psi_n[n-1] + k3[n-1],
                                 psi_n[n] + k3[n],
                                 pot[n]);
         }
-        for (int n = 0; n < N; n++)
+        for (size_t n = 0; n < N; n++)
         {
             psi_n[n] = psi_n[n] + (1.0/6.0) * (k1[n] + 2.0 * k2[n] + 2.0 * k3[n] + k4[n]);
         }
@@ -207,7 +207,7 @@ public:
         uniform_real_distribution<> dist(W_inf, W_sup);     
 
         // atribuição aleatória de potenciais aos átomos da cadeia de acordo com o W escolhido
-        for (int n = 0; n < N; n++)
+        for (size_t n = 0; n < N; n++)
         {
             // gera e atribui ao i-ésimo sítio um determinado potencial on-site 
             pot[n] = dist(rng);
@@ -238,7 +238,8 @@ public:
 
     float calcPart()
     {
-        double acm_mod_quad, acm_mod_qutr = 0;
+        double acm_mod_quad = 0.0;
+        double acm_mod_qutr = 0.0;
 
         for (int n = 0; n < N; n++)
         {
