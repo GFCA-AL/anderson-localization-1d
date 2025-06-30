@@ -1,66 +1,118 @@
 # Simulação da Equação de Schrödinger Dependente do Tempo
 
-**Grupo de Física Computacional Aplicada (GFCA)**  
-Instituto Federal de Alagoas - Campus Maceió
-
----
+**Grupo de Física Computacional Aplicada (GFCA)**
+Instituto Federal de Alagoas — Campus Maceió
 
 ## 📌 Visão Geral
 
-Este repositório contém a base para uma simulação numérica da equação de Schrödinger dependente do tempo em uma dimensão, aplicada ao estudo da dinâmica eletrônica em redes cristalinas com desordem. Trata-se de uma iniciativa de pesquisa conduzida pelo Grupo de Física Computacional Aplicada (GFCA) com um aluno do ensino médio, Rafael Amorim (PIBIC), durante os anos de 2023-2025.
+Este repositório contém uma simulação numérica da equação de Schrödinger dependente do tempo em uma dimensão, aplicada ao estudo da dinâmica eletrônica em redes cristalinas com desordem. O projeto é desenvolvido pelo Grupo de Física Computacional Aplicada (GFCA) em parceria com o aluno Rafael Amorim (PIBIC), durante os anos de 2023–2025.
 
-O objetivo principal é modelar e analisar o comportamento de um elétron único evoluindo sob um Hamiltoniano de tight-binding com desordem diagonal, utilizando métodos de integração numérica.
-
----
+O objetivo principal é modelar e analisar o comportamento quântico de um elétron sob um Hamiltoniano do tipo **tight-binding com desordem estática**, utilizando métodos de integração numérica (Runge-Kutta de quarta ordem).
 
 ## 🔬 Contexto Físico
 
-O sistema simulado representa uma cadeia cristalina unidimensional com desordem aleatória entre os sítios. A função de onda inicial do elétron pode ser distribuída de forma delta ou gaussiana, dependendo dos parâmetros definidos. Ao longo da simulação, são extraídas grandezas físicas relevantes como:
+O sistema consiste em uma cadeia unidimensional com desordem aleatória nos potenciais on-site. A função de onda do elétron é inicialmente localizada ou distribuída de forma gaussiana, e sua evolução temporal é computada numericamente.
 
-- Probabilidade de retorno
-- Posição média (centróide)
-- Participação
-- Desvio quadrático
+Durante a simulação, são extraídas grandezas físicas de interesse como:
 
----
+* 📍 **Probabilidade de retorno** (em relação ao sítio inicial);
+* 🎯 **Posição média** (centróide da função de onda);
+* 📏 **Participação** (medida de espalhamento espacial);
+* 📈 **Desvio quadrático** (variância da posição);
+* 📷 **Densidade de Probabilidade** da função de onda num dado instante temporal ("fotografia").
+
 
 ## 🧮 Metodologia
 
-- A evolução temporal é realizada utilizando o método de **Runge-Kutta de quarta ordem**.
-- A desordem nos potenciais dos sítios é gerada a partir de uma distribuição uniforme em um intervalo pré-definido.
-- A função de onda do sistema é representada por arrays complexos e atualizada iterativamente ao longo do tempo.
+* A equação diferencial é integrada com o método **Runge-Kutta de quarta ordem (RK4)**;
+* Os potenciais de cada sítio são sorteados a partir de uma **distribuição uniforme** dentro de uma largura $W$;
+* A função de onda é armazenada como um vetor de números complexos e atualizada iterativamente;
+* A condição inicial pode ser uma **distribuição delta** (localizada) ou **gaussiana**.
 
----
 
-## 📊 Saídas e Análise
+## 📁 Estrutura
 
-A simulação produz arquivos de dados com resolução temporal contendo:
+O código-fonte é modularizado em três classes principais, separadas em arquivos `.cpp` e `.h`:
 
-- Probabilidade de retorno
-- Centrôide da função de onda
-- Participação eletrônica
-- Desvio quadrático
+* `WaveFunction`: representa a função de onda e calcula observáveis físicos;
+* `Cristal`: gera e armazena os potenciais desordenados da cadeia;
+* `Simulador`: integra a equação de Schrödinger no tempo e organiza as saídas.
 
-Esses dados serão utilizados para análise posterior, com foco em fenômenos de localização e transporte quântico em sistemas desordenados.
+O arquivo `main.cpp` é responsável por configurar e iniciar a simulação.
 
----
+## 📊 Saídas da Simulação
+
+Os dados são gravados em arquivos `.dat` com nomes que incluem a largura da desordem e um timestamp da execução. As principais saídas incluem:
+
+* `rschr_r_w=...`: retorno $R(t)$
+* `rschr_pm_w=...`: posição média $\langle x(t) \rangle$
+* `rschr_pt_w=...`: participação $P(t)$
+* `rschr_d_w=...`: desvio quadrático $D(t)$
+* `foto_t=...`: distribuição $|\psi(x,t)|^2$ em tempos específicos
+
+Esses dados podem ser analisados com ferramentas como Python, GNUPlot ou MATLAB.
+
 
 ## ⚙️ Compilação e Execução
 
-Instruções de compilação e uso serão incluídas assim que o código for finalizado. Um `Makefile` ou configuração em CMake será disponibilizado para facilitar o processo de construção.
+### 🛠️ Compilação com `Makefile`
 
----
+O repositório já inclui um `Makefile`. Para compilar o projeto, basta rodar:
+
+```bash
+make
+```
+
+Isso gera um executável chamado `simulador`.
+
+### 🧼 Limpeza
+
+Para remover os arquivos objeto e o executável:
+
+```bash
+make clean
+```
+
+### ▶️ Execução
+
+Execute o simulador com:
+
+```bash
+./simulador
+```
+
+O comportamento padrão pode ser alterado dentro do `main.cpp`, como o tamanho da cadeia, desvio inicial, e tempos para captura de "fotos".
+
+
+## 🧪 Exemplo de Parâmetros
+
+```cpp
+int tamanho = 500;
+float sigma = 1.0;
+double largura_desordem = 1.0;
+
+Simulador sistema(sigma, tamanho, largura_desordem);
+double tempos[] = {1, 2, 5, 10, 20};
+sistema.evoluir(tempos);
+```
 
 ## 📚 Licença
 
-Este projeto está licenciado sob os termos da **Licença MIT**, salvo disposição em contrário. Consulte o arquivo `LICENSE` para mais informações.
+Este projeto está licenciado sob a **Licença MIT**, salvo disposição em contrário. Veja o arquivo `LICENSE` para mais detalhes.
 
----
 
 ## 🧠 Contato
 
-Para dúvidas, contribuições ou propostas de colaboração, entre em contato com a coordenação do GFCA.
+Para dúvidas, sugestões ou colaborações, entre em contato com a coordenação do GFCA ou diretamente com o autor do projeto:
+
+📧 **[rafael.science.amorim@gmail.com](mailto:rafael.science.amorim@gmail.com)**
+
+## 🛠️ Perspectivas
+
+- Adição de uma função de normalização para a função de onda gaussiana; 
+- Integração com Python para plotagem automática;
+- Modificação para execução do código por meio de argumentos de linha de comando para maior praticidade.
 
 ---
 
-**Status:** Projeto em desenvolvimento ativo  
+**Status do projeto:** Em desenvolvimento ativo 🛠️
