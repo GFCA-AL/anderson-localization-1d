@@ -76,11 +76,14 @@ void Simulador::evoluir(double t_fotos[], float t_max) {
         salvarResultado(t, Psi.calcPM(), nome_pm);
         salvarResultado(t, Psi.calcVar(), nome_d);
 
-        if (int(t) == t_fotos[t_foto]) {
+        if (abs(t - t_fotos[t_foto]) <= 0.01) {
             ofstream foto_arq(format("foto_t={:.2f}_w={:.2f}_ts={}.dat", t, Cadeia.W, time(0)));
             vector<double> psi2 = Psi.Psi2();
-            for (size_t i = 0; i < psi2.size(); ++i)
-                foto_arq << format("{} {:.5f}\n", i, psi2[i]);
+            for (size_t i = 0; i < psi2.size(); i++)
+            {
+                foto_arq << format("{} {:.10f}\n", i, psi2[i]);
+            }
+
             t_foto++;
         }
 
